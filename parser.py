@@ -4,7 +4,7 @@ import obonet
 def load_data(data_folder):
     url = "https://raw.githubusercontent.com/obophenotype/human-phenotype-ontology/master/hp.obo"
     graph = obonet.read_obo(url)
-    for item in graph.nodes()
+    for item in graph.nodes():
         rec = graph.nodes[item]
         rec["_id"] = item
         if rec.get("is_a"):
