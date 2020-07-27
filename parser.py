@@ -17,8 +17,10 @@ def load_data(data_folder):
                     prefix, id = val.split(':', 1)
                     if prefix in ["http", "https"]:
                         continue
-                    if prefix in ['UMLS', 'MESH']:
+                    if prefix.lower() in ['umls', 'snomedct_us', 'snomed_ct', 'cohd', 'ncit']:
                         xrefs[prefix.lower()].add(id)
+                    elif prefix == 'MSH':
+                        xrefs['mesh'].add(id)
                     else:
                         xrefs[prefix.lower()].add(val)
             for k, v in xrefs.items():
