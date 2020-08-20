@@ -39,6 +39,7 @@ def load_data(data_folder):
     for item in graph.nodes():
         rec = graph.nodes[item]
         rec["_id"] = item
+        rec["hp"] = item
         if rec.get("is_a"):
             rec["parents"] = [parent for parent in rec.pop("is_a") if parent.startswith("HP:")]
         if rec.get("xref"):
