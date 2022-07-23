@@ -10,7 +10,10 @@
         "obonet"
     ],
     "dumper": {
-        "data_url": "http://purl.obolibrary.org/obo/hp.obo",
+        "data_url": [
+            "http://purl.obolibrary.org/obo/hp.obo",
+            "http://purl.obolibrary.org/obo/hp/hpoa/phenotype_to_genes.txt"
+        ],
         "uncompress": false,
         "release": "version:get_release"
     },

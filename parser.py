@@ -2,6 +2,8 @@ import networkx as nx
 import obonet
 from collections import defaultdict
 import re
+import os
+
 
 def get_synonyms(data):
     """Format synonyms as dicionary
@@ -13,10 +15,10 @@ def get_synonyms(data):
         related = []
         broad = []
         for syn in data['synonym']:
-            if 'EXACT' in syn: 
+            if 'EXACT' in syn:
                 match = re.findall(r'\"(.+?)\"', syn)
                 exact = exact + match
-            elif 'RELATED' in syn: 
+            elif 'RELATED' in syn:
                 match = re.findall(r'\"(.+?)\"', syn)
                 related = related + match
             elif 'BROAD' in syn:
@@ -33,7 +35,30 @@ def get_synonyms(data):
     else:
         return {}
 
+
 def load_data(data_folder):
+    annotations = {}
+    infile = os.path.join(data_folder, 'phenotype_to_genes.txt')
+    assert os.path.exists(infile)
+    with open(infile) as f:
+        f.readline()  # first line is just a header
+        for line in f:
+            datapoint = line.rstrip('\n').split('\t')
+            hpoID = datapoint[0]
+            entrezGeneID = datapoint[2]
+            entrezGeneSymbol = datapoint[3]
+            GDSourceInfo = datapoint[4]
+            GDSource = datapoint[5]
+            diseaseID = datapoint[6]
+            obj = {
+                'entrez_gene_id': entrezGeneID,
+                'entrez_gene_symbol': entrezGeneSymbol,
+                'gd_source_info': GDSourceInfo,
+                'gd_source': GDSource,
+                'disease_id': diseaseID
+            }
+            annotations.setdefault(hpoID, []).append(obj)
+
     url = "https://raw.githubusercontent.com/obophenotype/human-phenotype-ontology/master/hp.obo"
     graph = obonet.read_obo(url)
     for item in graph.nodes():
@@ -61,16 +86,20 @@ def load_data(data_folder):
             rec["xrefs"] = dict(xrefs)
         rec["children"] = [child for child in graph.predecessors(item) if child.startswith("HP:")]
         rec["ancestors"] = [ancestor for ancestor in nx.descendants(graph, item) if ancestor.startswith("HP:")]
-        rec["descendants"] = [descendant for descendant in nx.ancestors(graph,item) if descendant.startswith("HP:")]
+        rec["descendants"] = [descendant for descendant in nx.ancestors(graph, item) if descendant.startswith("HP:")]
         rec["synonym"] = get_synonyms(rec)
         if rec.get("created_by"):
             rec.pop("created_by")
         if rec.get("creation_date"):
             rec.pop("creation_date")
         if rec.get("relationship"):
-                for rel in rec.get("relationship"):
-                    predicate, val = rel.split(' ')
-                    prefix = val.split(':')[0]
-                    rec[predicate] = {prefix.lower(): val}
-                rec.pop("relationship")
+            for rel in rec.get("relationship"):
+                predicate, val = rel.split(' ')
+                prefix = val.split(':')[0]
+                rec[predicate] = {prefix.lower(): val}
+            rec.pop("relationship")
+
+        if annotations.get(item):
+            rec["annotations"] = annotations[item]
+
         yield rec
