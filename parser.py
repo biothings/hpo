@@ -47,19 +47,19 @@ def load_data(data_folder):
             hpoID = datapoint[0]
             entrezGeneID = datapoint[2]
             entrezGeneSymbol = datapoint[3]
-            GDSourceInfo = datapoint[4]
-            GDSource = datapoint[5]
+            sourceInfo = datapoint[4]
+            source = datapoint[5]
             diseaseID = datapoint[6]
             obj = {
                 'gene': {
                     'id': entrezGeneID,
                     'symbol': entrezGeneSymbol
                 },
-                'gd_source': GDSource,
+                'source': source,
                 'disease_id': diseaseID
             }
-            if GDSourceInfo != '' and GDSourceInfo != '-':
-                obj['gd_source_info'] = GDSourceInfo
+            if sourceInfo != '' and sourceInfo != '-':
+                obj['source_info'] = sourceInfo
             annotations.setdefault(hpoID, []).append(obj)
 
     url = "https://raw.githubusercontent.com/obophenotype/human-phenotype-ontology/master/hp.obo"
