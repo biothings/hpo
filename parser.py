@@ -58,7 +58,7 @@ def load_data(data_folder):
                 'gd_source': GDSource,
                 'disease_id': diseaseID
             }
-            if GDSourceInfo != '' or GDSourceInfo != '-':
+            if GDSourceInfo != '' and GDSourceInfo != '-':
                 obj['gd_source_info'] = GDSourceInfo
             annotations.setdefault(hpoID, []).append(obj)
 
