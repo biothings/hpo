@@ -55,10 +55,11 @@ def load_data(data_folder):
                     'id': entrezGeneID,
                     'symbol': entrezGeneSymbol
                 },
-                'gd_source_info': GDSourceInfo,
                 'gd_source': GDSource,
                 'disease_id': diseaseID
             }
+            if GDSourceInfo != '' or GDSourceInfo != '-':
+                obj['gd_source_info'] = GDSourceInfo
             annotations.setdefault(hpoID, []).append(obj)
 
     url = "https://raw.githubusercontent.com/obophenotype/human-phenotype-ontology/master/hp.obo"
