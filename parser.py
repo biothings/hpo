@@ -51,8 +51,10 @@ def load_data(data_folder):
             GDSource = datapoint[5]
             diseaseID = datapoint[6]
             obj = {
-                'entrez_gene_id': entrezGeneID,
-                'entrez_gene_symbol': entrezGeneSymbol,
+                'gene': {
+                    'id': entrezGeneID,
+                    'symbol': entrezGeneSymbol
+                },
                 'gd_source_info': GDSourceInfo,
                 'gd_source': GDSource,
                 'disease_id': diseaseID
