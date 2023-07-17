@@ -14,8 +14,7 @@
             "http://purl.obolibrary.org/obo/hp.obo",
             "http://purl.obolibrary.org/obo/hp/hpoa/phenotype_to_genes.txt"
         ],
-        "uncompress": false,
-        "release": "version:get_release"
+        "uncompress": false
     },
     "uploader": {
         "parser": "parser:load_data",

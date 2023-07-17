@@ -37,7 +37,7 @@ def get_synonyms(data):
 
 
 def load_data(data_folder):
-    annotations = {}
+    annotations = defaultdict(list)
     infile = os.path.join(data_folder, 'phenotype_to_genes.txt')
     assert os.path.exists(infile)
     with open(infile) as f:
@@ -45,29 +45,27 @@ def load_data(data_folder):
         for line in f:
             datapoint = line.rstrip('\n').split('\t')
             hpoID = datapoint[0]
-            entrezGeneID = datapoint[2]
-            entrezGeneSymbol = datapoint[3]
-            sourceInfo = datapoint[4]
-            source = datapoint[5]
-            diseaseID = datapoint[6]
+            ncbiGeneID = datapoint[2]
+            geneSymbol = datapoint[3]
+            diseaseID = datapoint[4]
             obj = {
                 'gene': {
-                    'id': entrezGeneID,
-                    'symbol': entrezGeneSymbol
+                    'id': ncbiGeneID,
+                    'symbol': geneSymbol
                 },
-                'source': source,
                 'disease_id': diseaseID
             }
-            if sourceInfo != '' and sourceInfo != '-':
-                obj['source_info'] = sourceInfo
-            annotations.setdefault(hpoID, []).append(obj)
+            annotations[hpoID].append(obj)
 
     url = "https://raw.githubusercontent.com/obophenotype/human-phenotype-ontology/master/hp.obo"
     graph = obonet.read_obo(url)
     for item in graph.nodes():
         rec = graph.nodes[item]
+
         rec["_id"] = item
         rec["hp"] = item
+        if rec.get("def"):
+            rec["def"] = rec.get("def").replace('"', '')
         if rec.get("is_a"):
             rec["parents"] = [parent for parent in rec.pop("is_a") if parent.startswith("HP:")]
         if rec.get("xref"):
@@ -102,7 +100,6 @@ def load_data(data_folder):
                 rec[predicate] = {prefix.lower(): val}
             rec.pop("relationship")
 
-        if annotations.get(item):
-            rec["annotations"] = annotations[item]
+        rec["annotations"] = annotations[item]
 
         yield rec
