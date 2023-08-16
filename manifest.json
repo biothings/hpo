@@ -1,9 +1,8 @@
 {
     "version": "1.0",
     "__metadata__": {
-        "license_url": "fhttps://hpo.jax.org/app/download/ontology",
-        "licence": "",
-        "url": "https://hpo.jax.org/app/download/ontology"
+        "license_url": "https://hpo.jax.org/app/license",
+        "url": "https://hpo.jax.org"
     },
     "requires": [
         "networkx",
